@@ -53,14 +53,19 @@ app.post(
               created,
             } = checkoutSession;
 
-            // Get order ID from metadata
-            const orderId = metadata;
+            // Get order ID from metadata since it was passed
+            const orderId = metadata?.orderId;
 
-            // Mark order as complete based on the payment_status
+            /*
+                Mark order as complete based on the payment_status
+                You have access ti other information from the checkout session
+                including the amount_total, date created, currency and so much more
+                checkoout the Checkout session object in stripe docs: https://docs.stripe.com/api/checkout/sessions/object
+            */
+
+            // handle your database updates and any other logic
             if (payment_status == "paid") {
-              //
-            } else {
-              //
+              // /
             }
 
             break;
@@ -97,7 +102,8 @@ app.get("/", (_, res) => {
 // POST  /checkout to process incoming payment requests from client
 app.post("/checkout", async (req: Request, res: Response) => {
   /*  
-  gain product information by id from request, calculate final price using quantity
+    Retreive cart from request, calculate final amount to be paid.
+    In this example we're purchasing only one product with quantity 1
   */
 
   const product: { id: number; name: string; priceInCents: number } = {
@@ -106,7 +112,8 @@ app.post("/checkout", async (req: Request, res: Response) => {
     priceInCents: 4500,
   };
 
-  // Create an order id and mark as unpaid
+  // Create an order, store it on your database with paymentStatus "unpaid"
+  // This article is focused on stripe so I'm not doing that fully.
   const orderId = Math.floor(Math.random() * 1000);
 
   try {
